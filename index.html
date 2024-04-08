@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./style.css">
+
+    <link rel="shortcut icon" href="./assets/favicon_io/favicon.ico" type="image/x-icon">
+    <title>MyAudio</title>
+</head>
+
+<body class="h-screen overflow-y-auto  md:overflow-y-hidden" x-data>
+
+    <img src="./assets/images/bg.jpg" id="main-bg" alt="">
+
+    <main class="absolute top-0 w-full h-full">
+        <div class="grid grid-rows-2 md:grid-cols-2 absolute top-0 left-0 bottom-0 w-full lg:w-[100%] h-auto gap-2 my-1 mt-4 lg:mt-0 p-4">
+
+            <template x-if="$store.lyrics && $store.lyrics.nowPlaying">
+                <div class="h-full w-full rounded-lg relative row-span-2" id="firstSec">
+                    
+                    <img id="#songBg" :src="$store.lyrics.nowPlaying.coverPath" class="h-full w-full mx-auto rounded-md pt-10">
+
+                    <h1 class="w-full flex flex-col justify-center items-center absolute top-0 text-gray-200 bg-gray-900 text-2xl p-1.5 rounded-lg">
+                        <span class="flex items-center justify-center"><span class="title text-xl font-medium tracking-widest">Song Title : &nbsp;</span><span x-text="$store.lyrics.nowPlaying.title" class="font-medium title"></span></span>
+                        <span class="flex justify-center items-center"><span class="title text-xl font-medium tracking-widest">Song by : &nbsp;</span><span x-text="$store.lyrics.nowPlaying.artist" class="font-medium title"></span></span>
+                    </h1>
+
+                    <input x-on:change="$store.lyrics.updateCurrentTime()" x-model="$store.lyrics.progress" type="range" min="0" max="100" value="0" class="w-[95%] h-2 absolute bottom-32 md:left-5 left-2">
+
+                    <div class="w-full absolute bottom-10 h-auto flex justify-center items-center md:space-x-6 space-x-4 my-1">
+                        <i @click="$store.lyrics.previous()" class="fa-solid fa-backward-step text-[#37ff29] cursor-pointer"></i>
+                        <i @click="$store.lyrics.backward()" class="fa-solid fa-backward text-gray-300 cursor-pointer"></i>
+                        <i @load="$store.lyrics.updateCurrentTime()" @click="$store.lyrics.toggle()" :class="$store.lyrics.nowPlaying.playing ? 'fa-circle-pause' : 'fa-circle-play' " class="fa-solid fa-circle-play fa-beat-fade text-[#37ff29] bg-gray-900 rounded-full cursor-pointer"></i>
+                        <i @click="$store.lyrics.forward()" class="fa-solid fa-forward text-gray-300 cursor-pointer"></i>
+                        <i @click="$store.lyrics.next()" x-model="$store.lyrics.currentSongIndex" class="fa-solid fa-forward-step text-[#37ff29] cursor-pointer"></i>
+                    </div>
+
+                </div>
+            </template>
+
+            <div class="h-full w-full rounded-lg relative">
+                <template x-if="$store.lyrics.nowPlaying">
+                    <img id="#songListBg" :src="$store.lyrics.nowPlaying.musicWavesPath" class="h-full w-full mx-auto rounded-md opacity-50">
+                </template>
+
+                <ul id="songListContainer" class="absolute top-1 left-2 text-white grid w-[98%] px-2 pt-1">
+                    <template x-for="song in $store.lyrics.songs">
+
+                        <li x-on:click="$store.lyrics.handleLyrics(song)" class="w-full md:w-[100%] bg-gray-900 my-1 rounded-lg py-1 tracking-wider cursor-pointer">
+                            <span class="mx-2 listItemPlayBtn" @click="$store.lyrics.play(song)">
+                                <i :class="song.playing ? 'fa-circle-pause' : 'fa-circle-play'" class="fa-solid fa-beat-fade text-xl text-[#37ff29] bg-gray-900 rounded-full cursor-pointer"></i>
+                            </span>
+
+                            <a x-html="song.title" class="text-white text-sm relative p-1"></a>
+
+                            <div id="songLyricsBg" x-show="song.lyricspri" class="md:h-[45vh] md:w-[100%] absolute md:right-2 md:top-[50vh] top-[45vh] right-2 rounded-lg overflow-y-auto p-4">
+                                <p class="text-justify opacity-100 z-50" x-html="song.lyrics.join('<br />')"></p>
+                            </div>
+                        </li>
+
+                    </template>
+                </ul>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="./lyrics.js"></script>
+    <script src="./alpine.js"></script>
+    <!-- first involve your alpine.js if you are working with CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</body>
+
+</html>
